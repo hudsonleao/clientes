@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Acesso restrito</title>
+
+    <!-- Bootstrap -->
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Estilo site -->
+    <link href="/assets/css/login.css" rel="stylesheet">
+
+    <!-- Contador e redirecionamento para pagina de login-->
+    <script language="javascript" type="text/javascript">
+        var cont
+        var tmp = 6
+        function tempo() {
+            if (tmp >= 1) {
+                tmp--
+            } else {
+                window.location = "/"
+            }
+            document.getElementById('tempo').value = "Você será redirecionado em " + tmp + " segundos"
+        }
+        cont = setInterval('tempo()', 1000)
+    </script>
+
+</head>
+
+<body>
+
+    <div class="text-center">
+        <img src="/assets/img/acesso-restrito.png"><br/>
+        <h4>Você não tem acesso para acessar essa página.</h4><br/>
+        <input name="tempo" type="text" id="tempo" style="border: hidden; background: transparent; width: 250px;margin: 0 auto;text-align: center;" readonly="">
+    </div>
+
+</body>
+</html>

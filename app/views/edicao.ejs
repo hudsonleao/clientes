@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!--<link rel="icon" href="../../favicon.ico">-->
+
+    <title>Editar</title>
+
+    <!-- Bootstrap -->
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Estilo site -->
+    <link href="/assets/css/login.css" rel="stylesheet">
+    
+    <!-- Jquery padrão bootstrap -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="assets/js/jquery.min.js"><\/script>')</script>
+</head>
+
+<body>
+    <!-- Importa o navbar -->
+    <%- include('navbar') -%>
+
+    <section>
+        <div class="container">
+            <h1 class="text-center">Edição de usuário</h1>
+            <div class="jumbotron">
+                <% /*Percorre o resultado da consulta, e enquanto o tamanho da consulta for menor que o
+                contador, o array recebe os valores para serem recuperados posteriormente
+                */
+                for(var i=0;i < resultado.length;i++){
+                
+                /*Se o nível do usuário logado for diferente do nível Normal ou o usuário da consulta ao banco
+                for igual ao usuário logado.
+                */
+                if ((parametros.nivel) !== 1 || (resultado[i].usuario) == usuario){
+
+                /*Se o nível do usuário logado for igual a Admin e o usuário da consulta ao banco for
+                diferente do nível Normal.
+                */    
+                if ((parametros.nivel) == 2 && (resultado[i].nivel) !== 1){%>
+                <h1 class="text-center">Você não tem autorização para acessar esta página.</h1>
+                <%
+                        break; 
+                    }%>
+                <!--Inicio do formulário-->
+                <form action="/cliente/editar/salvar" method="POST">
+                    <input name="id" value="<%=resultado[i].id%>" hidden>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="nome">*Nome:</label>
+                                <input type="text" name="nome" value="<%=resultado[i].nome%>" class="form-control"
+                                    placeholder="Digite o nome" aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="usuario">*Usuário:</label>
+                                <input type="text" name="usuario" value="<%=resultado[i].usuario%>" class="form-control"
+                                    placeholder="Digite o usuario" aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="email">*E-mail:</label>
+                                <input type="email" name="email" class="form-control" value="<%=resultado[i].email%>"
+                                    placeholder="Digite o e-mail" aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="tel1">*Telefone 1:</label>
+                                <input type="text" id="tel1" name="tel1" class="form-control tel1"
+                                    value="<%=resultado[i].tel1%>" placeholder="Digite seu telefone"
+                                    aria-describedby="basic-addon1" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="tel2">Telefone 2:</label>
+                                <% //Se a consulta ao banco retornou algum valor diferente de vazio 
+                                if(resultado[i].tel2 !== ""){%>
+                                <input type="text" id="tel2" name="tel2" class="form-control tel2"
+                                    value="<%=resultado[i].tel2%>" placeholder="Digite seu telefone"
+                                    aria-describedby="basic-addon1">
+                                <% } else{%>
+                                <input type="text" id="tel2" name="tel2" class="form-control tel2"
+                                    placeholder="Digite seu telefone" aria-describedby="basic-addon1">
+                                <% }%>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="tel3">Telefone 3:</label>
+                                <% //Se a consulta ao banco retornou algum valor diferente de vazio 
+                                if(resultado[i].tel3 !== ""){%>
+                                <input type="text" id="tel3" name="tel3" class="form-control tel3"
+                                    value="<%=resultado[i].tel3%>" placeholder="Digite seu telefone"
+                                    aria-describedby="basic-addon1">
+                                <% } else{%>
+                                <input type="text" id="tel3" name="tel3" class="form-control tel3"
+                                    placeholder="Digite seu telefone" aria-describedby="basic-addon1">
+                                <% }%>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="tel4">Telefone fixo:</label>
+                                <% //Se a consulta ao banco retornou algum valor diferente de vazio 
+                                if(resultado[i].tel4 !== ""){%>
+                                <input type="text" id="tel4" name="tel4" class="form-control tel4"
+                                    value="<%=resultado[i].tel4%>" placeholder="Digite seu telefone"
+                                    aria-describedby="basic-addon1">
+                                <% } else{%>
+                                <input type="text" id="tel4" name="tel4" class="form-control tel4"
+                                    placeholder="Digite seu telefone" aria-describedby="basic-addon1">
+                                <% }%>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="nivel">*Nivel:</label>
+                                <select class="form-control" name="nivel" id="nivel">
+                                    <% //Se o nível do usuário logado for igual a Super Admin
+                                    if (parametros.nivel == 3){%>
+                                    <option value="<%=resultado[i].nivel%>">Atual ( <%if (resultado[i].nivel == 1){%>
+                                        Normal
+                                        <%}
+                                                                              if (resultado[i].nivel == 2){%>
+                                        Admin
+                                        <% }if (resultado[i].nivel == 3) {%>
+                                        Super Admin
+                                        <% }
+                                                                              %> )</option>
+                                    <option value="1">Normal</option>
+                                    <option value="2">Admin</option>
+                                    <option value="3">Super Admin</option>
+                                    <% } %>
+                                    <% //Se o nivel do usuário logado foi igual a Admin
+                                    if (parametros.nivel == 2){%>
+                                    <option value="<%=resultado[i].nivel%>">Atual ( <%if (resultado[i].nivel == 1){%>
+                                        Normal
+                                        <%}
+                                                                                  if (resultado[i].nivel == 2){%>
+                                        Admin
+                                        <% }if (resultado[i].nivel == 3) {%>
+                                        Super Admin
+                                        <% }
+                                                                                  %> )</option>
+                                    <option value="1">Normal</option>
+                                    <% } %>
+                                    <% //Se o nivel do usuário logado foi igual a Normal
+                                    if (parametros.nivel == 1){%>
+                                    <option value="<%=resultado[i].nivel%>">Normal</option>
+                                    <% } %>
+                                </select>
+                            </div>
+
+                            <label>* Campos com preenchimento obrigatório. </label>
+                        </div>
+                    </div><!-- Fim do row-->
+
+                    <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-floppy-saved"></span>
+                        Salvar</button>
+                </form>
+                <!--Fim do formulário-->
+            </div>
+            <!--Fim jumbotron-->
+            <% } //Fim do primeiro if
+                else{%>
+            <h1 class="text-center">Você não tem autorização para acessar esta página.</h1>
+            <%}     
+                } //Fim do for %>
+
+        </div>
+        <!--Fim do container-->
+    </section>
+    <!--Fim da sessão-->
+
+    <!-- Javascript e Jquery-->
+    <script src="/assets/js/bootstrap.min.js"></script>
+    <script>window.jQuery || document.write('<script src="assets/js/jquery.min.js"><\/script>')</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.0/jquery.mask.js"></script>
+    <script>
+        // Formata os campos de telefone
+        jQuery("input.tel1, input.tel2, input.tel3")
+            .mask("(99) 99999-9999")
+            .focusout(function (event) {
+                var target, phone, element;
+                target = (event.currentTarget) ? event.currentTarget : event.srcElement;
+                phone = target.value.replace(/\D/g, '');
+                element = $(target);
+                element.unmask();
+            });
+
+        jQuery("input.tel4")
+            .mask("(99) 9999-9999")
+            .focusout(function (event) {
+                var target, phone, element;
+                target = (event.currentTarget) ? event.currentTarget : event.srcElement;
+                phone = target.value.replace(/\D/g, '');
+                element = $(target);
+                element.unmask();
+            });
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!--<link rel="icon" href="../../favicon.ico">-->
+
+    <title>Edição de senha</title>
+
+    <!-- Bootstrap -->
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Estilo site -->
+    <link href="/assets/css/login.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Importa o navbar -->
+    <%- include('navbar') -%>
+    <section>
+        <div class="container">
+            <h1 class="text-center">Edição de senha</h1>
+            <div class="jumbotron">
+                <div class="row">
+                    <%/*Percorre o resultado da consulta, e enquanto o tamanho da consulta for menor que o
+                contador, o array recebe os valores para serem recuperados posteriormente
+                */ 
+                for(var i=0;i < resultado.length;i++){
+
+                /*Se o nível do usuário logado for diferente do nível Normal ou o usuário da consulta ao banco
+                for igual ao usuário logado.
+                */
+                if ((parametros.nivel) !== 1 || (resultado[i].usuario) == usuario){
+                    
+                /*Se o nível do usuário logado for igual a Admin e o usuário da consulta ao banco for
+                diferente do nível Normal.
+                */      
+                if ((parametros.nivel) == 2 && (resultado[i].nivel) !== 1){%>
+                    <h1 class="text-center">Você não tem autorização para acessar esta página.</h1>
+                    <%
+                        break; 
+                    }%>
+                    <form action="/cliente/alterar-senha/salvar" method="POST">
+                        <input name="id" value="<%=resultado[i].id%>" hidden>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="usuario">Usuário:</label>
+                                <input type="text" name="usuario" value="<%=resultado[i].usuario%>" class="form-control"
+                                    placeholder="Digite o usuario" aria-describedby="basic-addon1" readonly>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="senha">Senha:</label>
+                                <input type="password" name="senha" class="form-control" placeholder="Digite a nova senha"
+                                    aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                </div>
+                <!--Fim row-->
+
+                <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-floppy-saved"></span>
+                    Salvar</button>
+                </form>
+                <!--Fim formulário-->
+            </div>
+            <!--Fim jumbotron-->
+            <% }
+                else{%>
+            <h1 class="text-center">Você não tem autorização para acessar esta página.</h1>
+            <%}    
+                } %>
+
+        </div>
+        <!--Fim do container-->
+    </section>
+    <!--Fim da sessão-->
+
+    <!-- Javascript e Jquery-->
+    <script src="/assets/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.0/jquery.mask.js"></script>
+</body>
+
+</html>

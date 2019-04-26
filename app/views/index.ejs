@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <!--<link rel="icon" href="../../favicon.ico">-->
+
+  <title>Inicio</title>
+
+  <!-- Bootstrap -->
+  <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Estilo site -->
+  <link href="assets/css/style.css" rel="stylesheet">
+  <link href="assets/css/login.css" rel="stylesheet">
+
+  <!-- Script utilizado no filtro da tabela -->
+  <script type="text/javascript">
+
+    window.onload = function () {
+
+      var filtro = document.getElementById('filtro-usuario');
+      var tabela = document.getElementById('lista');
+      filtro.onkeyup = function () {
+        var nomeFiltro = filtro.value;
+        for (var i = 1; i < tabela.rows.length; i++) {
+          var conteudoCelula = tabela.rows[i].cells[1].innerText;
+          var corresponde = conteudoCelula.toLowerCase().indexOf(nomeFiltro) >= 0;
+          tabela.rows[i].style.display = corresponde ? '' : 'none';
+        }
+      };
+
+    }
+
+  </script>
+
+</head>
+
+<body>
+  <!-- Importa o navbar -->
+  <%- include('navbar') -%>
+
+  <section>
+    <div class="container">
+      <h1 class="text-center">Usuários</h1>
+      <% /* Níveis de acesso:
+      Super Admin = 3
+      Admin = 2
+      Normal = 1
+      O usuário Normal não pode adicionar um cliente.
+      Se o nível for diferente de Normal faça
+      */
+      if ((parametros.nivel) !== 1 ){%>
+      <a href="/cliente/adicionar"><button type="button" class="btn btn-success"><span
+            class="glyphicon glyphicon-plus"></span> Adicionar</button></a>
+      <% } %>
+      <div class="jumbotron">
+        <!-- Inicio do filtro da tabela -->
+        <div class="form-group">
+          <input class="form-control" id="filtro-usuario" placeholder="Pesquisar por usuário...">
+        </div>
+        <!-- Fim do filtro da tabela -->
+        <table class="table table-bordered" width="100%" cellspacing="0" id="lista">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Usuário</th>
+              <th>Nível</th>
+              <th>#</th>
+            </tr>
+          </thead>
+          <tbody>
+            <%/*Percorre o resultado da consulta, e enquanto o tamanho da consulta for menor que o
+            contador, o array recebe os valores para serem recuperados posteriormente
+            */ 
+            for(var i=0;i < resultado.length;i++){
+
+            //Se o nível do usuario logado for igual a Super Admin 
+                      if (parametros.nivel == 3){%>
+            <tr>
+              <td>
+                <%=resultado[i].id%>
+              </td>
+              <td>
+                <%=resultado[i].usuario%>
+              </td>
+              <td>
+                <%if (resultado[i].nivel == 1){%>
+                Normal
+                <%}
+                              if (resultado[i].nivel == 2){%>
+                Admin
+                <% }if (resultado[i].nivel == 3) {%>
+                Super Admin
+                <% }
+                              %>
+              </td>
+              <td>
+                <!--Inicio dos botões-->
+                <div class="botoes">
+                  <form action="/cliente/editar" method="POST">
+                    <input name="id" value="<%=resultado[i].id%>" hidden />
+                    <button type="submit" class="btn btn-info">
+                      <span class="glyphicon glyphicon-edit"></span> Editar
+                    </button>
+                  </form>
+
+                  <%  //Faz com que o usuário não possa excluir seu próprio login
+                      if ((resultado[i].usuario) !== usuarios){ %>
+                  <form action="/cliente/excluir" method="POST">
+                    <input name="id" value="<%=resultado[i].id%>" hidden />
+                    <button type="submit" class="btn btn-danger"
+                      onclick="return confirm('Tem certeza que deseja excluir este cliente?')">
+                      <span class="glyphicon glyphicon-trash"></span> Excluir
+                    </button>
+                  </form>
+                  <% } %>
+                  <form action="/cliente/alterar-senha" method="POST">
+                    <input name="id" value="<%=resultado[i].id%>" hidden />
+                    <button type="submit" class="btn btn-success">
+                      <span class="glyphicon glyphicon-lock"></span> Senha
+                    </button>
+                  </form>
+                  <form action="/cliente/detalhes" method="POST">
+                    <input name="id" value="<%=resultado[i].id%>" hidden />
+                    <button type="submit" class="btn btn-warning">
+                      <span class="glyphicon glyphicon-list"></span> Detalhes
+                    </button>
+                  </form>
+                </div>
+                <!--Fim dos botões-->
+                <%} else{
+                    //Se o nível do usuario logado for igual a Admin 
+                                      if (parametros.nivel == 2){
+
+                                        //Se o nível do usuário da consulta no banco for diferente de Super Admin
+                                        if ((resultado[i].nivel) !== 3){
+
+                                          /*Se o nível do usuário da consulta no banco for igual a Admin e se o nome 
+                                          do usuário da consulta no banco for igual ao do usuário logado ou o nível do
+                                          usuário da consulta no banco for igual a normal*/
+                                          if ((resultado[i].nivel) == 2 && (resultado[i].usuario) == usuarios || (resultado[i].nivel) == 1){%>
+            <tr>
+              <td>
+                <%=resultado[i].id%>
+              </td>
+              <td>
+                <%=resultado[i].usuario%>
+              </td>
+              <td>
+                <%if (resultado[i].nivel == 1){%>
+                Normal
+                <%}
+                                                      if (resultado[i].nivel == 2){%>
+                Admin
+                <% }if (resultado[i].nivel == 3) {%>
+                Super Admin
+                <% }
+                                                      %>
+              </td>
+              <td>
+                <!--Inicio dos botões-->
+                <div class="botoes">
+                  <form action="/cliente/editar" method="POST">
+                    <input name="id" value="<%=resultado[i].id%>" hidden />
+                    <button type="submit" class="btn btn-info">
+                      <span class="glyphicon glyphicon-edit"></span> Editar
+                    </button>
+                  </form>
+
+                  <%//Faz com que o usuário não possa excluir seu próprio login 
+                      if ((resultado[i].usuario) !== usuarios){ %>
+                  <form action="/cliente/excluir" method="POST">
+                    <input name="id" value="<%=resultado[i].id%>" hidden />
+                    <button type="submit" class="btn btn-danger"
+                      onclick="return confirm('Tem certeza que deseja excluir este cliente?')">
+                      <span class="glyphicon glyphicon-trash"></span> Excluir
+                    </button>
+                  </form>
+                  <% } %>
+                  <form action="/cliente/alterar-senha" method="POST">
+                    <input name="id" value="<%=resultado[i].id%>" hidden />
+                    <button type="submit" class="btn btn-success">
+                      <span class="glyphicon glyphicon-lock"></span> Senha
+                    </button>
+                  </form>
+                  <form action="/cliente/detalhes" method="POST">
+                    <input name="id" value="<%=resultado[i].id%>" hidden />
+                    <button type="submit" class="btn btn-warning">
+                      <span class="glyphicon glyphicon-list"></span> Detalhes
+                    </button>
+                  </form>
+                </div>
+                <!--Fim dos botões-->
+
+                <% }}
+                                      }else{%>
+                <% //Se o nivel do usuario logado for igual a normal 
+                  if ((parametros.nivel) == 1){
+                                        //Se o usuario da consulta ao banco for igual ao usuario logado
+                                        if ((resultado[i].usuario) == usuarios){%>
+            <tr>
+              <td>
+                <%=resultado[i].id%>
+              </td>
+              <td>
+                <%=resultado[i].usuario%>
+              </td>
+              <td>
+                <%if (resultado[i].nivel == 1){%>
+                Normal
+                <%}
+                                                    if (resultado[i].nivel == 2){%>
+                Admin
+                <% }if (resultado[i].nivel == 3) {%>
+                Super Admin
+                <% }
+                                                    %>
+              </td>
+              <td>
+                <!--Inicio dos botões-->
+                <div class="botoes">
+                  <form action="/cliente/editar" method="POST">
+                    <input name="id" value="<%=resultado[i].id%>" hidden />
+                    <button type="submit" class="btn btn-info">
+                      <span class="glyphicon glyphicon-edit"></span> Editar
+                    </button>
+                  </form>
+
+                  <% //Faz com que o usuário não possa excluir seu próprio login 
+                    if ((resultado[i].usuario) !== usuarios){ %>
+                  <form action="/cliente/excluir" method="POST">
+                    <input name="id" value="<%=resultado[i].id%>" hidden />
+                    <button type="submit" class="btn btn-danger"
+                      onclick="return confirm('Tem certeza que deseja excluir este cliente?')">
+                      <span class="glyphicon glyphicon-trash"></span> Excluir
+                    </button>
+                  </form>
+                  <% } %>
+                  <form action="/cliente/alterar-senha" method="POST">
+                    <input name="id" value="<%=resultado[i].id%>" hidden />
+                    <button type="submit" class="btn btn-success">
+                      <span class="glyphicon glyphicon-lock"></span> Senha
+                    </button>
+                  </form>
+                  <form action="/cliente/detalhes" method="POST">
+                    <input name="id" value="<%=resultado[i].id%>" hidden />
+                    <button type="submit" class="btn btn-warning">
+                      <span class="glyphicon glyphicon-list"></span> Detalhes
+                    </button>
+                  </form>
+                </div>
+                <!--Fim dos botões-->
+                <%  } //Fim do segundo if
+                                      } //Fim do primeiro if
+                                     } //Fim do segundo else
+                                    } //Fim do primeiro else
+                                  } //Fim do for %>
+                </p>
+              </td>
+            </tr>
+
+
+
+          </tbody>
+        </table>
+        <!--Fim da tabela-->
+      </div>
+      <!--Fim jumbotron-->
+    </div>
+    <!--Fim do container-->
+  </section>
+  <!--Fim da sessão-->
+
+  <!-- Javascript e Jquery-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="assets/js/jquery.min.js"><\/script>')</script>
+  <script src="assets/js/bootstrap.min.js"></script>
+</body>
+
+</html>

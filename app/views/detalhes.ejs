@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!--<link rel="icon" href="../../favicon.ico">-->
+
+    <title>Detalhes</title>
+
+    <!-- Bootstrap -->
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Estilo site -->
+    <link href="/assets/css/login.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Importa o navbar -->
+    <%- include('navbar') -%>
+
+    <section>
+        <div class="container">
+            <h1 class="text-center">Mais detalhes</h1>
+            <div class="jumbotron">
+                <% /*Percorre o resultado da consulta, e enquanto o tamanho da consulta for menor que o
+                contador, o array recebe os valores para serem recuperados posteriormente
+                */
+                for(var i=0;i < resultado.length;i++){
+                
+                /*Se o nível do usuário logado for diferente do nível Normal ou o usuário da consulta ao banco
+                for igual ao usuário logado.
+                */
+                if ((parametros.nivel) !== 1 || (resultado[i].usuario) == usuario){
+
+                /*Se o nível do usuário logado for igual a Admin e o usuário da consulta ao banco for
+                diferente do nível Normal.
+                */    
+                if ((parametros.nivel) == 2 && (resultado[i].nivel) !== 1){%>
+                <h1 class="text-center">Você não tem autorização para acessar esta página.</h1>
+                <%
+                        break; 
+                    }%>
+
+                <div class="text-center">
+                    <% for(var i=0;i < resultado.length;i++){%>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4>Nome:</h4>
+                            <h5><%=resultado[i].nome%></h5>
+                        </div>
+                        <div class="col-md-4">
+                            <h4>Usuário:</h4>
+                            <h5><%=resultado[i].usuario%></h5>
+                        </div>
+                        <div class="col-md-4">
+                            <h4>CPF:</h4>
+                            <h5><%=resultado[i].cpf%></h5>
+                        </div>
+                        <div class="col-md-4">
+                            <h4>RG:</h4>
+                            <h5><%=resultado[i].rg%></h5>
+                        </div>
+                        <div class="col-md-4">
+                            <h4>E-mail:</h4>
+                            <h5><%=resultado[i].email%></h5>
+                        </div>
+                        <div class="col-md-4">
+                            <h4>Nível:</h4>
+                            <% if(resultado[i].nivel == 1){%>
+                            <h5>Normal</h5>
+                            <% } %>
+                            <% if(resultado[i].nivel == 2){%>
+                            <h5>Admin</h5>
+                            <% } %>
+                            <% if(resultado[i].nivel == 3){%>
+                            <h5>Super Admin</h5>
+                            <% } %>
+                        </div>
+                        <div class="col-md-4">
+                            <h4>Telefone 1:</h4>
+                            <h5><%=resultado[i].tel1%></h5>
+                        </div>
+                        <% if(resultado[i].tel2 !== ""){ %>
+                        <div class="col-md-4">
+                            <h4>Telefone 2:</h4>
+                            <h5><%=resultado[i].tel2%></h5>
+                        </div>
+                        <% } %>
+                        <% if(resultado[i].tel3 !== ""){ %>
+                        <div class="col-md-4">
+                            <h4>Telefone 3:</h4>
+                            <h5><%=resultado[i].tel3%></h5>
+                        </div>
+                        <% } %>
+                        <% if(resultado[i].tel4 !== ""){ %>
+                        <div class="col-md-4">
+                            <h4>Telefone fixo:</h4>
+                            <h5><%=resultado[i].tel4%></h5>
+                        </div>
+                        <% } %>
+                    </div>
+                </div>
+
+                <% }
+            }
+                else{%>
+                <h1 class="text-center">Você não tem autorização para acessar esta página.</h1>
+                <%}
+                    
+                } %>
+
+
+            </div>
+            <!--Fim jumbotron-->
+        </div>
+        <!--Fim container-->
+    </section>
+    <!--Fim sessão-->
+
+    <!-- Javascript e Jquery-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="/assets/js/jquery.min.js"><\/script>')</script>
+    <script src="/assets/js/bootstrap.min.js"></script>
+</body>
+
+</html>
